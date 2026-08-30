@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>متابعة مخالفات الأمانة</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script data-goatcounter="https://eng-abdulrahman.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* شاشة البدء - لون بني داكن جاد */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #0a0604 0%, #050302 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            animation: fadeInOut 2.5s ease-in-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; visibility: visible; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        .logo-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: textFadeSlide 0.4s ease-out 0.1s forwards, textFadeOut 0.3s ease-in 2.2s forwards;
+        }
+
+        @keyframes textFadeSlide {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes textFadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-5px); }
+        }
+
+        .welcome-logo {
+            width: 280px;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-logo {
+                width: 200px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .welcome-logo {
+                width: 350px;
+            }
+        }
+
+        /* التطبيق الرئيسي */
+        body {
+            background: #050302;
+            font-family: 'IBM Plex Sans Arabic', 'Segoe UI', 'Tahoma', sans-serif;
+            font-weight: 500;
+            padding: 1rem;
+            color: #e8dcd0;
+            font-variant-numeric: lining-nums;
+            font-feature-settings: "ss02";
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            opacity: 0;
+            animation: contentFadeIn 0.5s ease-out 0.3s forwards;
+        }
+
+        @keyframes contentFadeIn {
+            to { opacity: 1; }
+        }
+
+        /* الهيدر مع توسيط */
+        .main-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #3d2a1a;
+            padding-bottom: 0.8rem;
+        }
+        .main-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: linear-gradient(135deg, #c4956a, #6d4a2a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .main-header p {
+            color: #a07a5a;
+            font-size: 1rem;
+            margin-top: 0.3rem;
+            font-weight: 500;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        /* كروت الإحصائيات - 6 أرقام */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px solid #3d2a1a;
+            padding-bottom: 1.2rem;
+        }
+
+        .stat-card {
+            border-radius: 10px;
+            padding: 0.8rem 0.5rem;
+            text-align: center;
+            border: 1px solid #3d2a1a;
+            transition: 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #b89a7a;
+            margin-bottom: 0.3rem;
+            display: block;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #c47a2a;
+            line-height: 1.2;
+            direction: ltr;
+            display: block;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        .stat-sub {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #a07a5a;
+            display: block;
+            margin-top: 0.2rem;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        /* خلفيات كروت الإحصائيات - نفس ألوان كروت المخالفات */
+        .stat-card.pending {
+            background: #1a0f08;
+            border-color: #8a6040;
+        }
+        .stat-card.pending .stat-number {
+            color: #d4873a;
+        }
+        .stat-card.pending:hover {
+            border-color: #c4956a;
+            background: #2a1a0a;
+        }
+
+        .stat-card.objected {
+            background: #0a1a12;
+            border-color: #3a5a4a;
+        }
+        .stat-card.objected .stat-number {
+            color: #4a8a6a;
+        }
+        .stat-card.objected:hover {
+            border-color: #6aaa8a;
+            background: #0f2a1a;
+        }
+
+        .stat-card.confirmed {
+            background: #111111;
+            border-color: #4a4a4a;
+        }
+        .stat-card.confirmed .stat-number {
+            color: #8a8a8a;
+        }
+        .stat-card.confirmed:hover {
+            border-color: #6a6a6a;
+            background: #1a1a1a;
+        }
+
+        /* نافذة منبثقة للفئة */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 3, 2, 0.95);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .modal-container {
+            background: #0f0805;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #6d4a2a;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.8);
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+        
+        .modal-header {
+            background: #1a0f08;
+            padding: 1rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #6d4a2a;
+        }
+        
+        .modal-header h3 {
+            color: #c4956a;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: #b89a7a;
+            font-size: 1.8rem;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+            line-height: 1;
+            padding: 0 0.5rem;
+        }
+        
+        .close-modal:hover {
+            color: #da6a3a;
+            transform: scale(1.1);
+        }
+        
+        .modal-body {
+            padding: 1.2rem;
+            overflow-y: auto;
+            max-height: 65vh;
+        }
+
+        /* نافذة منبثقة لعرض الصورة */
+        .image-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 3, 2, 0.98);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .image-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .image-modal-container {
+            background: #0f0805;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #6d4a2a;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.8);
+        }
+
+        .image-modal-header {
+            background: #1a0f08;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #6d4a2a;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .image-modal-header h3 {
+            color: #c4956a;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            flex: 1;
+            text-align: center;
+        }
+
+        .close-image-modal {
+            background: none;
+            border: none;
+            color: #b89a7a;
+            font-size: 1.8rem;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+            line-height: 1;
+            padding: 0 0.5rem;
+        }
+
+        .close-image-modal:hover {
+            color: #da6a3a;
+            transform: scale(1.1);
+        }
+
+        .image-iframe-container {
+            flex: 1;
+            padding: 0.5rem;
+            background: #050302;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-iframe-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        
+        /* ملخص الفئة داخل النافذة */
+        .category-summary {
+            background: linear-gradient(135deg, #1a0f08, #0f0805);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            border: 1px solid #6d4a2a;
+        }
+        
+        .category-summary .summary-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #b89a7a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+        
+        .category-summary .summary-amount {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #c47a2a;
+            direction: ltr;
+        }
+        
+        .category-summary .summary-count {
+            font-size: 0.8rem;
+            color: #a07a5a;
+            margin-top: 0.25rem;
+        }
+        
+        .filtered-cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-left: 0.2rem;
+        }
+        
+        .filtered-card {
+            background: #0f0805;
+            border-radius: 8px;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid #3d2a1a;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+        
+        .filtered-card .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        
+        .filtered-amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #d4873a;
+            direction: ltr;
+        }
+        
+        .filtered-date {
+            background: #050302;
+            padding: 0.15rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: #b89a7a;
+        }
+        
+        .filtered-desc {
+            font-size: 0.85rem;
+            color: #e8dcd0;
+            text-align: center;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #b89a7a;
+        }
+
+        /* شبكة الكروت الرئيسية */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.9rem;
+        }
+
+        /* تحسين للشاشات المتوسطة فأكبر */
+        @media (min-width: 640px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+            body {
+                padding: 1.5rem;
+            }
+            .stat-number {
+                font-size: 1.6rem;
+            }
+            .main-header h1 {
+                font-size: 2rem;
+            }
+            .filtered-cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            .stats-grid {
+                gap: 1rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .cards-grid {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 0.5rem;
+            }
+            .stat-card {
+                padding: 0.6rem 0.3rem;
+            }
+            .stat-number {
+                font-size: 1rem;
+            }
+            .stat-label {
+                font-size: 0.6rem;
+            }
+            .stat-sub {
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.4rem;
+            }
+        }
+
+        /* الكارت - مع تغيير الخلفية حسب الحالة */
+        .transfer-card {
+            border-radius: 8px;
+            padding: 0.7rem 0.9rem;
+            transition: all 0.2s ease;
+            border: 1px solid #3d2a1a;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        .transfer-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* خلفيات البطاقات حسب الحالة */
+        .transfer-card.status-pending {
+            background: #1a0f08;
+            border-color: #8a6040;
+        }
+        .transfer-card.status-pending:hover {
+            border-color: #c4956a;
+            background: #2a1a0a;
+        }
+
+        .transfer-card.status-objected {
+            background: #0a1a12;
+            border-color: #3a5a4a;
+        }
+        .transfer-card.status-objected:hover {
+            border-color: #6aaa8a;
+            background: #0f2a1a;
+        }
+
+        .transfer-card.status-confirmed {
+            background: #111111;
+            border-color: #4a4a4a;
+        }
+        .transfer-card.status-confirmed:hover {
+            border-color: #6a6a6a;
+            background: #1a1a1a;
+        }
+
+        /* رأس الكارت */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+
+        .serial-number {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.15rem 0.6rem;
+            border-radius: 4px;
+            color: #c4956a;
+            direction: ltr;
+            font-family: 'IBM Plex Sans Arabic', monospace;
+            border: 1px solid rgba(109, 74, 42, 0.3);
+            white-space: nowrap;
+        }
+
+        .amount-top {
+            text-align: center;
+            direction: ltr;
+            flex: 1;
+        }
+
+        .amount-value-large {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #d4873a;
+            line-height: 1.2;
+            letter-spacing: -0.2px;
+            direction: ltr;
+            display: inline-block;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        .desc-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #e8dcd0;
+            line-height: 1.35;
+            word-break: break-word;
+            padding: 0.2rem 0;
+            border-right: 2px solid rgba(109, 74, 42, 0.4);
+            padding-right: 0.5rem;
+            text-align: center;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.1rem;
+        }
+
+        .date-value {
+            font-family: 'IBM Plex Sans Arabic', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            direction: ltr;
+            color: #b89a7a;
+            display: inline-block;
+        }
+
+        /* عنصر المدة المتبقية - بنفس سطر التاريخ والحالة */
+        .remaining-time {
+            font-family: 'IBM Plex Sans Arabic', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            direction: ltr;
+            display: inline-block;
+            color: #d4873a;
+            border: 1px solid rgba(61, 42, 26, 0.3);
+        }
+        
+        .remaining-time.success {
+            color: #5aaa7a;
+            border-color: #3a5a4a;
+        }
+        
+        .remaining-time.urgent {
+            color: #da4a3a;
+            border-color: #5a2a1a;
+        }
+        
+        .remaining-time.expired {
+            color: #7a7a7a;
+            border-color: #4a4a4a;
+        }
+        
+        /* الحالة - تصميم زجاجي ولامع */
+        .status-value {
+            font-family: 'IBM Plex Sans Arabic', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 0.15rem 0.7rem;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            direction: rtl;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(109, 74, 42, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.3px;
+        }
+        
+        .status-value:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(109, 74, 42, 0.2);
+        }
+        
+        .status-value:active {
+            transform: scale(0.98);
+        }
+
+        /* زر عرض الصورة */
+        .image-button {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(61, 42, 26, 0.3);
+            color: #c4956a;
+            padding: 0.5rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            text-decoration: none;
+        }
+
+        .image-button:hover {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #8a6040;
+            transform: scale(0.98);
+        }
+
+        /* نص بديل عند عدم وجود صورة */
+        .no-image-text {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(42, 26, 14, 0.3);
+            color: #5a4a3a;
+            padding: 0.5rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .footer-company {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            background: #0f0805;
+            padding: 0.8rem;
+            border-radius: 10px;
+            color: #a07a5a;
+            border-top: 1px solid #3d2a1a;
+            font-weight: 600;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        /* تحسينات للجوال */
+        @media (max-width: 480px) {
+            body {
+                padding: 0.8rem;
+            }
+            .amount-value-large {
+                font-size: 1.6rem;
+            }
+            .desc-value {
+                font-size: 1rem;
+            }
+            .serial-number {
+                font-size: 0.9rem;
+                padding: 0.2rem 0.65rem;
+            }
+            .date-value, .status-value, .remaining-time {
+                font-size: 0.6rem;
+                padding: 0.1rem 0.4rem;
+            }
+            .image-button, .no-image-text {
+                font-size: 0.8rem;
+            }
+            .modal-header h3 {
+                font-size: 1rem;
+            }
+            .category-summary .summary-amount {
+                font-size: 1.4rem;
+            }
+            .image-modal-container {
+                width: 98%;
+                height: 95vh;
+            }
+            .bottom-row {
+                gap: 0.2rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .amount-value-large {
+                font-size: 1.4rem;
+            }
+            .desc-value {
+                font-size: 0.95rem;
+            }
+            .date-value, .status-value, .remaining-time {
+                font-size: 0.55rem;
+                padding: 0.1rem 0.3rem;
+            }
+        }
+        
+        /* تخصيص شريط التمرير للنافذة */
+        .filtered-cards-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .filtered-cards-grid::-webkit-scrollbar-track {
+            background: #050302;
+            border-radius: 4px;
+        }
+        .filtered-cards-grid::-webkit-scrollbar-thumb {
+            background: #6d4a2a;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة البدء -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="logo-wrapper">
+            <svg class="welcome-logo" viewBox="60 60 250 300" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left Block -->
+                <path d="M70 260 L118 230 L118 340 L70 340 Z" fill="#E8F5F2" />
+                <!-- Center Main Tower -->
+                <path d="M132 90 L170 66 L208 90 L208 130 L182 114 L182 340 L154 340 L154 204 L132 218 Z" fill="#E8F5F2" />
+                <!-- Right Tower -->
+                <path d="M214 160 L262 190 L262 246 L236 228 L236 340 L214 340 Z" fill="#E8F5F2" />
+                <!-- Small Right Block -->
+                <path d="M274 248 L292 266 L292 340 L274 340 Z" fill="#E8F5F2" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- التطبيق الرئيسي -->
+    <div class="main-content" id="mainContent">
+        <div class="app-container">
+            <div class="main-header">
+                <h1>متابعة مخالفات الأمانة</h1>
+                <p>عرض المخالفات المسجلة وحالاتها</p>
+            </div>
+
+            <!-- كروت الإحصائيات -->
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <!-- كروت المخالفات الرئيسية -->
+            <div class="cards-grid" id="violationsGrid"></div>
+            
+            <!-- تذييل -->
+            <div class="footer-company">
+                أمانة المنطقة - إدارة الرقابة والمتابعة
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة للحالة -->
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalTitle">تصفية حسب الحالة</h3>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة لعرض الصورة -->
+    <div class="image-modal-overlay" id="imageModal">
+        <div class="image-modal-container">
+            <div class="image-modal-header">
+                <h3 id="imageModalTitle">🖼️ عرض صورة المخالفة</h3>
+                <button class="close-image-modal" id="closeImageModalBtn">&times;</button>
+            </div>
+            <div class="image-iframe-container">
+                <img id="violationImage" src="" alt="صورة المخالفة">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // عنوان الموقع الأساسي
+        const BASE_URL = 'https://engr-abdulrahman.github.io/Villa_23_Expenses/';
+        
+        // إزالة شاشة البدء بعد 2.5 ثانية
+        setTimeout(() => {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            if (welcomeScreen && welcomeScreen.parentNode) {
+                welcomeScreen.remove();
+            }
+            // تهيئة البيانات مباشرة
+            init();
+        }, 2600);
+
+        // بيانات المخالفات - مع مثال بتاريخ اعتراض مستقبلي
+        const violations = [
+            { id: 1, dateIssued: "2024-09-15", amount: 5000, description: "بناء بدون ترخيص", lastObjection: "2025-01-15", status: "قائمة", imageFileName: "violation1.jpg" },
+            { id: 2, dateIssued: "2024-09-20", amount: 3000, description: "تعدي على الرصيف العام", lastObjection: "2024-10-05", status: "تم الاعتراض", imageFileName: "violation2.jpg" },
+            { id: 3, dateIssued: "2024-09-25", amount: 8000, description: "إشغال طريق عام", lastObjection: "2024-09-28", status: "فاتت", imageFileName: "violation3.jpg" },
+            { id: 4, dateIssued: "2024-10-02", amount: 2000, description: "إلقاء مخلفات بناء", lastObjection: "2024-10-15", status: "قائمة", imageFileName: "violation4.jpg" },
+            { id: 5, dateIssued: "2024-10-10", amount: 4500, description: "حفر بدون تصريح", lastObjection: "2024-10-20", status: "تم الاعتراض", imageFileName: "violation5.jpg" },
+            { id: 6, dateIssued: "2024-10-15", amount: 10000, description: "إقامة سور عشوائي", lastObjection: "2024-10-25", status: "فاتت", imageFileName: null },
+            { id: 7, dateIssued: "2024-11-01", amount: 3500, description: "نشر أتربة واتربة", lastObjection: "2024-11-10", status: "قائمة", imageFileName: "violation7.jpg" },
+            { id: 8, dateIssued: "2024-11-05", amount: 6000, description: "استخدام عمالة غير نظامية", lastObjection: "2024-11-15", status: "تم الاعتراض", imageFileName: "violation8.jpg" },
+            { id: 9, dateIssued: "2024-11-12", amount: 2500, description: "عدم وجود لوحة إرشادية", lastObjection: "2024-11-18", status: "قائمة", imageFileName: null },
+            { id: 10, dateIssued: "2024-11-20", amount: 7500, description: "مخالفة اشتراطات البناء", lastObjection: "2024-11-25", status: "فاتت", imageFileName: "violation10.jpg" },
+            { id: 11, dateIssued: "2024-12-01", amount: 12000, description: "تشغيل بدون رخصة", lastObjection: "2024-12-10", status: "قائمة", imageFileName: "violation11.jpg" },
+            { id: 12, dateIssued: "2024-12-05", amount: 4000, description: "مخالفة بيئية", lastObjection: "2024-12-08", status: "تم الاعتراض", imageFileName: "violation12.jpg" }
+        ];
+
+        // دالة لحساب الأيام المتبقية بين اليوم وتاريخ معين
+        function calculateRemainingDays(dateString) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const targetDate = new Date(dateString);
+            targetDate.setHours(0, 0, 0, 0);
+            
+            const diffTime = targetDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            return diffDays;
+        }
+
+        // دالة للحصول على نص المدة المتبقية والفئة
+        function getRemainingText(dateString, status) {
+            // إذا كانت الحالة "تم الاعتراض"
+            if (status === "تم الاعتراض") {
+                return { text: "✅ تم الاعتراض", class: "success" };
+            }
+            
+            // إذا كانت الحالة "فاتت"
+            if (status === "فاتت") {
+                return { text: "⏰ انتهت", class: "expired" };
+            }
+            
+            // للحالات الأخرى (قائمة)
+            const days = calculateRemainingDays(dateString);
+            
+            if (days < 0) {
+                return { text: "⏰ مضى", class: "expired" };
+            } else if (days === 0) {
+                return { text: "⏳ اليوم آخر يوم!", class: "urgent" };
+            } else if (days <= 3) {
+                return { text: `⏳ باقي ${days} أيام`, class: "urgent" };
+            } else {
+                return { text: `⏳ باقي ${days} يوم`, class: "" };
+            }
+        }
+
+        // دالة للحصول على كلاس الحالة للبطاقة
+        function getStatusCardClass(status) {
+            const classMap = {
+                "قائمة": "status-pending",
+                "تم الاعتراض": "status-objected",
+                "فاتت": "status-confirmed"
+            };
+            return classMap[status] || "status-pending";
+        }
+
+        function getStatusColor(status) {
+            const colorMap = {
+                "قائمة": "#8a6040",
+                "تم الاعتراض": "#4a8a6a",
+                "فاتت": "#7a7a7a"
+            };
+            return colorMap[status] || "#8a6040";
+        }
+
+        function getStatusEmoji(status) {
+            const emojiMap = {
+                "قائمة": "🟠",
+                "تم الاعتراض": "🟢",
+                "فاتت": "⚪"
+            };
+            return emojiMap[status] || "⚪";
+        }
+
+        function formatAmount(amount) {
+            return `${amount.toLocaleString('en')} SAR`;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return "—";
+            return dateString;
+        }
+
+        function getStatusStats() {
+            const pending = violations.filter(v => v.status === "قائمة");
+            const objected = violations.filter(v => v.status === "تم الاعتراض");
+            const confirmed = violations.filter(v => v.status === "فاتت");
+            
+            return {
+                pending: { count: pending.length, total: pending.reduce((sum, v) => sum + v.amount, 0) },
+                objected: { count: objected.length, total: objected.reduce((sum, v) => sum + v.amount, 0) },
+                confirmed: { count: confirmed.length, total: confirmed.reduce((sum, v) => sum + v.amount, 0) }
+            };
+        }
+
+        function renderStats() {
+            const statsContainer = document.getElementById('statsGrid');
+            if (!statsContainer) return;
+            
+            const stats = getStatusStats();
+            
+            statsContainer.innerHTML = `
+                <div class="stat-card pending">
+                    <span class="stat-label">🟠 المخالفات القائمة</span>
+                    <span class="stat-number">${stats.pending.count}</span>
+                    <span class="stat-sub">${formatAmount(stats.pending.total)}</span>
+                </div>
+                <div class="stat-card objected">
+                    <span class="stat-label">🟢 المخالفات المعترضة</span>
+                    <span class="stat-number">${stats.objected.count}</span>
+                    <span class="stat-sub">${formatAmount(stats.objected.total)}</span>
+                </div>
+                <div class="stat-card confirmed">
+                    <span class="stat-label">⚪ المخالفات الفائتة</span>
+                    <span class="stat-number">${stats.confirmed.count}</span>
+                    <span class="stat-sub">${formatAmount(stats.confirmed.total)}</span>
+                </div>
+            `;
+        }
+
+        function showFilteredByStatus(status) {
+            const modal = document.getElementById('statusModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            const filtered = violations.filter(v => v.status === status);
+            const statusTotal = filtered.reduce((sum, v) => sum + v.amount, 0);
+            const statusColor = getStatusColor(status);
+            const statusEmoji = getStatusEmoji(status);
+            
+            modalTitle.innerHTML = `${statusEmoji} حالة: ${status}`;
+            
+            if (filtered.length === 0) {
+                modalBody.innerHTML = '<div class="no-results">لا توجد مخالفات في هذه الحالة</div>';
+            } else {
+                const cardsHtml = filtered.map((v, idx) => {
+                    const formattedAmount = formatAmount(v.amount);
+                    const formattedDate = formatDate(v.dateIssued);
+                    const formattedObjection = formatDate(v.lastObjection);
+                    const catColor = getStatusColor(v.status);
+                    const remaining = getRemainingText(v.lastObjection, v.status);
+                    return `
+                        <div class="filtered-card">
+                            <div class="row">
+                                <span class="filtered-amount">${formattedAmount}</span>
+                                <span class="filtered-date">📅 ${formattedDate}</span>
+                            </div>
+                            <div class="filtered-desc">${v.description}</div>
+                            <div class="row">
+                                <span style="background:#050302; padding:0.1rem 0.5rem; border-radius:12px; color:${catColor}; font-size:0.7rem; font-weight:600;">${getStatusEmoji(v.status)} ${v.status}</span>
+                                <span style="font-size:0.65rem; color:#b89a7a;">آخر اعتراض: ${formattedObjection}</span>
+                            </div>
+                            <div class="row">
+                                <span style="font-size:0.7rem; color:#a07a5a; width:100%; text-align:center; background:#050302; padding:0.15rem; border-radius:4px;">${remaining.text}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                modalBody.innerHTML = `
+                    <div class="category-summary" style="border-color: ${statusColor};">
+                        <div class="summary-label">📊 إجمالي مخالفات حالة "${status}"</div>
+                        <div class="summary-amount">${formatAmount(statusTotal)}</div>
+                        <div class="summary-count">${filtered.length} مخالفة</div>
+                    </div>
+                    <div class="filtered-cards-grid">${cardsHtml}</div>
+                `;
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('statusModal');
+            modal.classList.remove('active');
+        }
+
+        function showImageModal(imageFileName, violationId, description, dateIssued) {
+            const imageModal = document.getElementById('imageModal');
+            const violationImage = document.getElementById('violationImage');
+            const imageModalTitle = document.getElementById('imageModalTitle');
+            
+            if (imageFileName) {
+                const imageUrl = BASE_URL + imageFileName;
+                violationImage.src = imageUrl;
+                violationImage.alt = `صورة المخالفة #${violationId}`;
+                imageModalTitle.innerHTML = `🖼️ صورة المخالفة #${violationId} - ${description} | ${formatDate(dateIssued)}`;
+            } else {
+                violationImage.src = '';
+                violationImage.alt = 'لا توجد صورة للمخالفة';
+                imageModalTitle.innerHTML = `🚫 لا توجد صورة للمخالفة #${violationId}`;
+            }
+            
+            imageModal.classList.add('active');
+        }
+        
+        function closeImageModal() {
+            const imageModal = document.getElementById('imageModal');
+            const violationImage = document.getElementById('violationImage');
+            
+            imageModal.classList.remove('active');
+            setTimeout(() => {
+                if (!imageModal.classList.contains('active')) {
+                    violationImage.src = '';
+                }
+            }, 300);
+        }
+
+        function renderViolationCards() {
+            const gridContainer = document.getElementById('violationsGrid');
+            if (!gridContainer) return;
+            gridContainer.innerHTML = '';
+
+            // ترتيب من الأحدث إلى الأقدم
+            const sortedViolations = [...violations].sort((a, b) => b.id - a.id);
+
+            sortedViolations.forEach((v) => {
+                const card = document.createElement('div');
+                // إضافة كلاس الحالة للبطاقة
+                const statusClass = getStatusCardClass(v.status);
+                card.className = `transfer-card ${statusClass}`;
+                
+                const formattedAmount = formatAmount(v.amount);
+                const formattedDate = formatDate(v.dateIssued);
+                const formattedObjection = formatDate(v.lastObjection);
+                const statusColor = getStatusColor(v.status);
+                const statusEmoji = getStatusEmoji(v.status);
+                const serial = v.id;
+                
+                // حساب المدة المتبقية
+                const remaining = getRemainingText(v.lastObjection, v.status);
+                
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'card-header';
+                
+                const amountDiv = document.createElement('div');
+                amountDiv.className = 'amount-top';
+                const amountSpan = document.createElement('span');
+                amountSpan.className = 'amount-value-large';
+                amountSpan.textContent = formattedAmount;
+                amountDiv.appendChild(amountSpan);
+                
+                const serialSpan = document.createElement('div');
+                serialSpan.className = 'serial-number';
+                serialSpan.textContent = formattedDate;
+                
+                cardHeader.appendChild(amountDiv);
+                cardHeader.appendChild(serialSpan);
+                
+                const descDiv = document.createElement('div');
+                descDiv.className = 'desc-value';
+                descDiv.textContent = v.description;
+                
+                const bottomRow = document.createElement('div');
+                bottomRow.className = 'bottom-row';
+                
+                // تاريخ آخر اعتراض
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'date-value';
+                dateSpan.textContent = formattedObjection;
+                
+                // عنصر المدة المتبقية (في المنتصف)
+                const remainingSpan = document.createElement('span');
+                remainingSpan.className = `remaining-time ${remaining.class}`;
+                remainingSpan.textContent = remaining.text;
+                
+                // حالة المخالفة
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'status-value';
+                statusSpan.innerHTML = `${statusEmoji} ${v.status}`;
+                statusSpan.style.color = statusColor;
+                statusSpan.style.fontWeight = '700';
+                statusSpan.style.cursor = 'pointer';
+                statusSpan.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showFilteredByStatus(v.status);
+                });
+                
+                bottomRow.appendChild(dateSpan);
+                bottomRow.appendChild(remainingSpan);
+                bottomRow.appendChild(statusSpan);
+                
+                card.appendChild(cardHeader);
+                card.appendChild(descDiv);
+                card.appendChild(bottomRow);
+                
+                if (v.imageFileName && v.imageFileName !== null) {
+                    const imageBtn = document.createElement('button');
+                    imageBtn.className = 'image-button';
+                    imageBtn.innerHTML = `🖼️ عرض صورة المخالفة`;
+                    imageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showImageModal(v.imageFileName, v.id, v.description, v.dateIssued);
+                    });
+                    card.appendChild(imageBtn);
+                } else {
+                    const noImageDiv = document.createElement('div');
+                    noImageDiv.className = 'no-image-text';
+                    noImageDiv.innerHTML = `🖼️ لا توجد صورة للمخالفة`;
+                    card.appendChild(noImageDiv);
+                }
+                
+                gridContainer.appendChild(card);
+            });
+            
+            if (violations.length === 0) {
+                gridContainer.innerHTML = '<div style="background:#0f0805; padding:1.5rem; border-radius:8px; text-align:center;">لا توجد مخالفات مسجلة حالياً</div>';
+            }
+        }
+
+        function setupModalEvents() {
+            const statusModal = document.getElementById('statusModal');
+            const closeStatusBtn = document.getElementById('closeModalBtn');
+            
+            closeStatusBtn.addEventListener('click', closeModal);
+            statusModal.addEventListener('click', (e) => {
+                if (e.target === statusModal) {
+                    closeModal();
+                }
+            });
+            
+            const imageModal = document.getElementById('imageModal');
+            const closeImageBtn = document.getElementById('closeImageModalBtn');
+            
+            closeImageBtn.addEventListener('click', closeImageModal);
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal) {
+                    closeImageModal();
+                }
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (statusModal.classList.contains('active')) {
+                        closeModal();
+                    }
+                    if (imageModal.classList.contains('active')) {
+                        closeImageModal();
+                    }
+                }
+            });
+        }
+
+        function init() {
+            renderStats();
+            renderViolationCards();
+            setupModalEvents();
+        }
+    </script>
+
+</body>
+</html>
