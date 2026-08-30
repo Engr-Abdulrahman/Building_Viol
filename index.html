@@ -25,14 +25,14 @@
             justify-content: center;
             align-items: center;
             z-index: 3000;
-            animation: fadeInOut 3s ease-in-out forwards;
+            animation: fadeInOut 2.5s ease-in-out forwards;
             pointer-events: none;
         }
 
         @keyframes fadeInOut {
             0% { opacity: 0; visibility: visible; }
-            10% { opacity: 1; }
-            70% { opacity: 1; }
+            15% { opacity: 1; }
+            85% { opacity: 1; }
             100% { opacity: 0; visibility: hidden; }
         }
 
@@ -42,7 +42,7 @@
             align-items: center;
             opacity: 0;
             transform: translateY(15px);
-            animation: textFadeSlide 0.4s ease-out 0.1s forwards, textFadeOut 0.3s ease-in 2.5s forwards;
+            animation: textFadeSlide 0.4s ease-out 0.1s forwards, textFadeOut 0.3s ease-in 2.2s forwards;
         }
 
         @keyframes textFadeSlide {
@@ -90,11 +90,10 @@
 
         .main-content {
             opacity: 0;
-            animation: fadeIn 1s ease-out 1s forwards;
+            animation: contentFadeIn 0.5s ease-out 0.3s forwards;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
+        @keyframes contentFadeIn {
             to { opacity: 1; }
         }
 
@@ -910,7 +909,7 @@
         // عنوان الموقع الأساسي
         const BASE_URL = 'https://engr-abdulrahman.github.io/Building_Viol/';
         
-        // إزالة شاشة البدء بعد 3 ثواني (لتتناسب مع مدة الـ fade)
+        // إزالة شاشة البدء بعد 2.5 ثانية
         setTimeout(() => {
             const welcomeScreen = document.getElementById('welcomeScreen');
             if (welcomeScreen && welcomeScreen.parentNode) {
@@ -918,7 +917,7 @@
             }
             // تهيئة البيانات مباشرة
             init();
-        }, 3000);
+        }, 2600);
 
         // بيانات المخالفات حسب الجدول المطلوب
         const violations = [
@@ -1236,7 +1235,7 @@
                     card.appendChild(noImageDiv);
                 }
                 
-                // إضافة عنصر المدة المتبقية بعد الصورة
+                // إضافة عنصر المدة المتبقية بعد الصورة (بدون أي هوامش إضافية)
                 const remainingDiv = document.createElement('div');
                 remainingDiv.style.textAlign = 'center';
                 
