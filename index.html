@@ -699,48 +699,71 @@
             transform: scale(0.98);
         }
 
-        /* زر عرض الصورة */
-        .image-button {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(61, 42, 26, 0.3);
-            color: #c4956a;
-            padding: 0.5rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
+        /* صورة مصغرة - تحل محل الزر */
+        .thumbnail-container {
             width: 100%;
             margin-top: 0.25rem;
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-            text-decoration: none;
-        }
-
-        .image-button:hover {
-            background: rgba(0, 0, 0, 0.5);
-            border-color: #8a6040;
-            transform: scale(0.98);
-        }
-
-        /* نص بديل عند عدم وجود صورة */
-        .no-image-text {
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(109, 74, 42, 0.3);
+            transition: all 0.2s ease;
             background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(42, 26, 14, 0.3);
+            position: relative;
+        }
+
+        .thumbnail-container:hover {
+            border-color: #8a6040;
+            transform: scale(1.01);
+        }
+
+        .thumbnail-container img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail-container:hover img {
+            filter: brightness(1.1);
+        }
+
+        .thumbnail-container .overlay-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .thumbnail-container:hover .overlay-icon {
+            opacity: 1;
+        }
+
+        /* رسالة عدم وجود صورة */
+        .no-image-container {
+            width: 100%;
+            margin-top: 0.25rem;
+            border-radius: 8px;
+            padding: 0.8rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px dashed rgba(109, 74, 42, 0.3);
             color: #5a4a3a;
-            padding: 0.5rem 0.6rem;
-            border-radius: 30px;
             font-size: 0.75rem;
             font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            width: 100%;
-            margin-top: 0.25rem;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
             cursor: default;
             opacity: 0.7;
@@ -778,8 +801,8 @@
                 font-size: 0.7rem;
                 padding: 0.15rem 0.5rem;
             }
-            .image-button, .no-image-text {
-                font-size: 0.8rem;
+            .thumbnail-container img {
+                height: 80px;
             }
             .modal-header h3 {
                 font-size: 1rem;
@@ -799,6 +822,9 @@
             }
             .desc-value {
                 font-size: 0.95rem;
+            }
+            .thumbnail-container img {
+                height: 60px;
             }
         }
         
@@ -839,7 +865,7 @@
         <div class="app-container">
             <div class="main-header">
                 <h1>متابعة مخالفات الأمانة</h1>
-                <p>بدءاً من أغسطس 2026م</p>
+                <p>عرض المخالفات المسجلة وحالاتها</p>
             </div>
 
             <!-- كروت الإحصائيات -->
@@ -850,7 +876,7 @@
             
             <!-- تذييل -->
             <div class="footer-company">
-                شركة سكني للمقاولات
+                أمانة المنطقة - إدارة الرقابة والمتابعة
             </div>
         </div>
     </div>
@@ -1187,19 +1213,35 @@
                 card.appendChild(bottomRow);
                 card.appendChild(remainingDiv);
                 
+                // إضافة الصورة المصغرة أو رسالة عدم وجود صورة
                 if (v.imageFileName && v.imageFileName !== null) {
-                    const imageBtn = document.createElement('button');
-                    imageBtn.className = 'image-button';
-                    imageBtn.innerHTML = `🖼️ عرض صورة المخالفة`;
-                    imageBtn.addEventListener('click', (e) => {
+                    const thumbnailContainer = document.createElement('div');
+                    thumbnailContainer.className = 'thumbnail-container';
+                    
+                    const img = document.createElement('img');
+                    img.src = BASE_URL + v.imageFileName;
+                    img.alt = `صورة المخالفة #${v.id}`;
+                    img.loading = 'lazy'; // تحميل كسول لتحسين الأداء
+                    
+                    // أيقونة التكبير التي تظهر عند التحويم
+                    const overlayIcon = document.createElement('span');
+                    overlayIcon.className = 'overlay-icon';
+                    overlayIcon.textContent = '🔍 اضغط للتكبير';
+                    
+                    thumbnailContainer.appendChild(img);
+                    thumbnailContainer.appendChild(overlayIcon);
+                    
+                    // عند الضغط على الصورة المصغرة تظهر بالحجم الكامل
+                    thumbnailContainer.addEventListener('click', (e) => {
                         e.stopPropagation();
                         showImageModal(v.imageFileName, v.id, v.description, v.dateIssued);
                     });
-                    card.appendChild(imageBtn);
+                    
+                    card.appendChild(thumbnailContainer);
                 } else {
                     const noImageDiv = document.createElement('div');
-                    noImageDiv.className = 'no-image-text';
-                    noImageDiv.innerHTML = `🖼️ لا توجد صورة للمخالفة`;
+                    noImageDiv.className = 'no-image-container';
+                    noImageDiv.textContent = '🖼️ لا توجد صورة للمخالفة';
                     card.appendChild(noImageDiv);
                 }
                 
