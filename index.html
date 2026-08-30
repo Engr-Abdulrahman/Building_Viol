@@ -136,10 +136,10 @@
             border-radius: 10px;
             padding: 0.8rem 0.5rem;
             text-align: center;
-            border: 1px solid #3d2a1a;
             transition: 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             font-family: 'IBM Plex Sans Arabic', sans-serif;
+            border: 1px solid;
         }
 
         .stat-card:hover {
@@ -151,16 +151,15 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            color: #b89a7a;
+            color: #c9b09d;
             margin-bottom: 0.3rem;
             display: block;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
         }
 
         .stat-number {
-            font-size: 1.3rem;
+            font-size: 2.2rem;
             font-weight: 800;
-            color: #c47a2a;
             line-height: 1.2;
             direction: ltr;
             display: block;
@@ -170,13 +169,13 @@
         .stat-sub {
             font-size: 0.7rem;
             font-weight: 500;
-            color: #a07a5a;
+            color: #b8957a;
             display: block;
             margin-top: 0.2rem;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
         }
 
-        /* خلفيات كروت الإحصائيات - نفس ألوان كروت المخالفات */
+        /* خلفيات كروت الإحصائيات بنفس ألوان المخالفات */
         .stat-card.pending {
             background: #1a0f08;
             border-color: #8a6040;
@@ -479,7 +478,7 @@
                 padding: 1.5rem;
             }
             .stat-number {
-                font-size: 1.6rem;
+                font-size: 2.8rem;
             }
             .main-header h1 {
                 font-size: 2rem;
@@ -507,7 +506,7 @@
                 padding: 0.6rem 0.3rem;
             }
             .stat-number {
-                font-size: 1rem;
+                font-size: 1.6rem;
             }
             .stat-label {
                 font-size: 0.6rem;
@@ -631,23 +630,23 @@
 
         .date-value {
             font-family: 'IBM Plex Sans Arabic', monospace;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
             background: rgba(0, 0, 0, 0.3);
-            padding: 0.15rem 0.5rem;
+            padding: 0.15rem 0.6rem;
             border-radius: 6px;
             direction: ltr;
             color: #b89a7a;
             display: inline-block;
         }
 
-        /* عنصر المدة المتبقية - بنفس سطر التاريخ والحالة */
+        /* عنصر المدة المتبقية */
         .remaining-time {
             font-family: 'IBM Plex Sans Arabic', monospace;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
             background: rgba(0, 0, 0, 0.3);
-            padding: 0.15rem 0.5rem;
+            padding: 0.15rem 0.6rem;
             border-radius: 6px;
             direction: ltr;
             display: inline-block;
@@ -673,16 +672,16 @@
         /* الحالة - تصميم زجاجي ولامع */
         .status-value {
             font-family: 'IBM Plex Sans Arabic', monospace;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 700;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            padding: 0.15rem 0.7rem;
+            padding: 0.2rem 0.8rem;
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             direction: rtl;
             cursor: pointer;
             transition: all 0.25s ease;
@@ -776,8 +775,8 @@
                 padding: 0.2rem 0.65rem;
             }
             .date-value, .status-value, .remaining-time {
-                font-size: 0.6rem;
-                padding: 0.1rem 0.4rem;
+                font-size: 0.7rem;
+                padding: 0.15rem 0.5rem;
             }
             .image-button, .no-image-text {
                 font-size: 0.8rem;
@@ -792,9 +791,6 @@
                 width: 98%;
                 height: 95vh;
             }
-            .bottom-row {
-                gap: 0.2rem;
-            }
         }
 
         @media (max-width: 380px) {
@@ -803,10 +799,6 @@
             }
             .desc-value {
                 font-size: 0.95rem;
-            }
-            .date-value, .status-value, .remaining-time {
-                font-size: 0.55rem;
-                padding: 0.1rem 0.3rem;
             }
         }
         
@@ -901,20 +893,16 @@
             init();
         }, 2600);
 
-        // بيانات المخالفات - مع مثال بتاريخ اعتراض مستقبلي
+        // بيانات المخالفات حسب الجدول المطلوب
         const violations = [
-            { id: 1, dateIssued: "2024-09-15", amount: 5000, description: "بناء بدون ترخيص", lastObjection: "2025-01-15", status: "قائمة", imageFileName: "violation1.jpg" },
-            { id: 2, dateIssued: "2024-09-20", amount: 3000, description: "تعدي على الرصيف العام", lastObjection: "2024-10-05", status: "تم الاعتراض", imageFileName: "violation2.jpg" },
-            { id: 3, dateIssued: "2024-09-25", amount: 8000, description: "إشغال طريق عام", lastObjection: "2024-09-28", status: "فاتت", imageFileName: "violation3.jpg" },
-            { id: 4, dateIssued: "2024-10-02", amount: 2000, description: "إلقاء مخلفات بناء", lastObjection: "2024-10-15", status: "قائمة", imageFileName: "violation4.jpg" },
-            { id: 5, dateIssued: "2024-10-10", amount: 4500, description: "حفر بدون تصريح", lastObjection: "2024-10-20", status: "تم الاعتراض", imageFileName: "violation5.jpg" },
-            { id: 6, dateIssued: "2024-10-15", amount: 10000, description: "إقامة سور عشوائي", lastObjection: "2024-10-25", status: "فاتت", imageFileName: null },
-            { id: 7, dateIssued: "2024-11-01", amount: 3500, description: "نشر أتربة واتربة", lastObjection: "2024-11-10", status: "قائمة", imageFileName: "violation7.jpg" },
-            { id: 8, dateIssued: "2024-11-05", amount: 6000, description: "استخدام عمالة غير نظامية", lastObjection: "2024-11-15", status: "تم الاعتراض", imageFileName: "violation8.jpg" },
-            { id: 9, dateIssued: "2024-11-12", amount: 2500, description: "عدم وجود لوحة إرشادية", lastObjection: "2024-11-18", status: "قائمة", imageFileName: null },
-            { id: 10, dateIssued: "2024-11-20", amount: 7500, description: "مخالفة اشتراطات البناء", lastObjection: "2024-11-25", status: "فاتت", imageFileName: "violation10.jpg" },
-            { id: 11, dateIssued: "2024-12-01", amount: 12000, description: "تشغيل بدون رخصة", lastObjection: "2024-12-10", status: "قائمة", imageFileName: "violation11.jpg" },
-            { id: 12, dateIssued: "2024-12-05", amount: 4000, description: "مخالفة بيئية", lastObjection: "2024-12-08", status: "تم الاعتراض", imageFileName: "violation12.jpg" }
+            { id: 1, dateIssued: "2026-06-16", amount: 1000, description: "القاء أو عدم إزالة نفايات الهدم والبناء الناتجة عن أعمال الترميم أو البناء أو الهدم.", lastObjection: "2026-08-29", status: "تم الاعتراض", imageFileName: "IMG-20260825-WA0011.jpg" },
+            { id: 2, dateIssued: "2026-06-16", amount: 1000, description: "تهالك السور المؤقت وعدم صيانته.", lastObjection: "2026-08-29", status: "تم الاعتراض", imageFileName: "IMG-20260825-WA0010.jpg" },
+            { id: 3, dateIssued: "2026-08-10", amount: 2000, description: "عدم تركيب السور المؤقت للمواقع الإنشائية.", lastObjection: "2026-10-11", status: "قائمة", imageFileName: "IMG-20260825-WA0012.jpg" },
+            { id: 4, dateIssued: "2026-08-17", amount: 1000, description: "تهالك السور المؤقت وعدم صيانته.", lastObjection: "2026-10-18", status: "قائمة", imageFileName: "IMG-20260825-WA0009.jpg" },
+            { id: 5, dateIssued: "2026-08-19", amount: 1000, description: "تخزين مواد البناء و وضع المعدات و القيام بأعمال ورش البناء خارج حدود السور المؤقت.", lastObjection: "2026-10-22", status: "قائمة", imageFileName: "IMG-20260825-WA0008.jpg" },
+            { id: 6, dateIssued: "2026-08-19", amount: 2000, description: "عدم تركيب السور المؤقت للمواقع الإنشائية.", lastObjection: "2026-10-22", status: "قائمة", imageFileName: "IMG-20260825-WA0007.jpg" },
+            { id: 7, dateIssued: "2026-08-19", amount: 1000, description: "وجود مواد بناء خارج منطقه مخصصه.", lastObjection: "2026-10-22", status: "قائمة", imageFileName: "IMG-20260825-WA0006.jpg" },
+            { id: 8, dateIssued: "2026-08-19", amount: 1000, description: "تخزين مواد البناء و وضع المعدات و القيام بأعمال ورش البناء خارج حدود السور المؤقت.", lastObjection: "2026-10-26", status: "قائمة", imageFileName: "IMG-20260827-WA0014.jpg" }
         ];
 
         // دالة لحساب الأيام المتبقية بين اليوم وتاريخ معين
@@ -935,19 +923,19 @@
         function getRemainingText(dateString, status) {
             // إذا كانت الحالة "تم الاعتراض"
             if (status === "تم الاعتراض") {
-                return { text: "✅ تم الاعتراض", class: "success" };
+                return { text: "✅ تم الاعتراض بنجاح", class: "success" };
             }
             
             // إذا كانت الحالة "فاتت"
             if (status === "فاتت") {
-                return { text: "⏰ انتهت", class: "expired" };
+                return { text: "⏰ انتهت المدة", class: "expired" };
             }
             
             // للحالات الأخرى (قائمة)
             const days = calculateRemainingDays(dateString);
             
             if (days < 0) {
-                return { text: "⏰ مضى", class: "expired" };
+                return { text: "⏰ التاريخ مضى.", class: "expired" };
             } else if (days === 0) {
                 return { text: "⏳ اليوم آخر يوم!", class: "urgent" };
             } else if (days <= 3) {
@@ -1097,7 +1085,7 @@
                 const imageUrl = BASE_URL + imageFileName;
                 violationImage.src = imageUrl;
                 violationImage.alt = `صورة المخالفة #${violationId}`;
-                imageModalTitle.innerHTML = `🖼️ صورة المخالفة #${violationId} - ${description} | ${formatDate(dateIssued)}`;
+                imageModalTitle.innerHTML = `🖼️ صورة المخالفة #${violationId} - ${description.substring(0, 30)}... | ${formatDate(dateIssued)}`;
             } else {
                 violationImage.src = '';
                 violationImage.alt = 'لا توجد صورة للمخالفة';
@@ -1167,17 +1155,10 @@
                 const bottomRow = document.createElement('div');
                 bottomRow.className = 'bottom-row';
                 
-                // تاريخ آخر اعتراض
                 const dateSpan = document.createElement('span');
                 dateSpan.className = 'date-value';
                 dateSpan.textContent = formattedObjection;
                 
-                // عنصر المدة المتبقية (في المنتصف)
-                const remainingSpan = document.createElement('span');
-                remainingSpan.className = `remaining-time ${remaining.class}`;
-                remainingSpan.textContent = remaining.text;
-                
-                // حالة المخالفة
                 const statusSpan = document.createElement('span');
                 statusSpan.className = 'status-value';
                 statusSpan.innerHTML = `${statusEmoji} ${v.status}`;
@@ -1190,12 +1171,21 @@
                 });
                 
                 bottomRow.appendChild(dateSpan);
-                bottomRow.appendChild(remainingSpan);
                 bottomRow.appendChild(statusSpan);
+                
+                // عنصر المدة المتبقية
+                const remainingDiv = document.createElement('div');
+                remainingDiv.style.cssText = 'text-align: center; margin-top: 0.1rem;';
+                
+                const remainingSpan = document.createElement('span');
+                remainingSpan.className = `remaining-time ${remaining.class}`;
+                remainingSpan.textContent = remaining.text;
+                remainingDiv.appendChild(remainingSpan);
                 
                 card.appendChild(cardHeader);
                 card.appendChild(descDiv);
                 card.appendChild(bottomRow);
+                card.appendChild(remainingDiv);
                 
                 if (v.imageFileName && v.imageFileName !== null) {
                     const imageBtn = document.createElement('button');
