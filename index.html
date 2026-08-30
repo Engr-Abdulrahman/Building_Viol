@@ -577,7 +577,7 @@
         }
 
         .serial-number {
-            font-size: 0.7rem;
+            font-size: 0.9rem;
             font-weight: 700;
             background: rgba(0, 0, 0, 0.4);
             padding: 0.15rem 0.6rem;
@@ -630,7 +630,7 @@
 
         .date-value {
             font-family: 'IBM Plex Sans Arabic', monospace;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 600;
             background: rgba(0, 0, 0, 0.3);
             padding: 0.15rem 0.6rem;
@@ -643,7 +643,7 @@
         /* عنصر المدة المتبقية */
         .remaining-time {
             font-family: 'IBM Plex Sans Arabic', monospace;
-            font-size: 0.75rem;
+            font-size: 0.9rem;
             font-weight: 700;
             background: rgba(0, 0, 0, 0.3);
             padding: 0.15rem 0.6rem;
@@ -672,7 +672,7 @@
         /* الحالة - تصميم زجاجي ولامع */
         .status-value {
             font-family: 'IBM Plex Sans Arabic', monospace;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 700;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(8px);
@@ -798,7 +798,7 @@
                 padding: 0.2rem 0.65rem;
             }
             .date-value, .status-value, .remaining-time {
-                font-size: 0.7rem;
+                font-size: 0.9rem;
                 padding: 0.15rem 0.5rem;
             }
             .thumbnail-container img {
@@ -1199,19 +1199,9 @@
                 bottomRow.appendChild(dateSpan);
                 bottomRow.appendChild(statusSpan);
                 
-                // عنصر المدة المتبقية
-                const remainingDiv = document.createElement('div');
-                remainingDiv.style.cssText = 'text-align: center; margin-top: 0.1rem;';
-                
-                const remainingSpan = document.createElement('span');
-                remainingSpan.className = `remaining-time ${remaining.class}`;
-                remainingSpan.textContent = remaining.text;
-                remainingDiv.appendChild(remainingSpan);
-                
                 card.appendChild(cardHeader);
                 card.appendChild(descDiv);
                 card.appendChild(bottomRow);
-                card.appendChild(remainingDiv);
                 
                 // إضافة الصورة المصغرة أو رسالة عدم وجود صورة
                 if (v.imageFileName && v.imageFileName !== null) {
@@ -1244,6 +1234,17 @@
                     noImageDiv.textContent = '🖼️ لا توجد صورة للمخالفة';
                     card.appendChild(noImageDiv);
                 }
+                
+                // إضافة عنصر المدة المتبقية بعد الصورة (بدون أي هوامش إضافية)
+                const remainingDiv = document.createElement('div');
+                remainingDiv.style.textAlign = 'center';
+                
+                const remainingSpan = document.createElement('span');
+                remainingSpan.className = `remaining-time ${remaining.class}`;
+                remainingSpan.textContent = remaining.text;
+                remainingDiv.appendChild(remainingSpan);
+                
+                card.appendChild(remainingDiv);
                 
                 gridContainer.appendChild(card);
             });
